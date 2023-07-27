@@ -4,6 +4,9 @@ import (
 	"go-raft-kv/internal/logprovider"
 	"go.uber.org/zap"
 	"math/rand"
+	"net"
+	"net/http"
+	"net/rpc"
 	"strconv"
 	"time"
 )
@@ -17,7 +20,20 @@ func newNode(address string) *node {
 	}
 }
 
-func start(raft *Raft) {
+func Init(id int, nodeAddr []string) *Raft {
+	ns := make(map[int]*node)
+	for k, v := range nodeAddr {
+		ns[k] = newNode(v)
+	}
+
+	// 创建节点
+	return &Raft{
+		self:  id,
+		nodes: ns,
+	}
+}
+
+func Start(raft *Raft) {
 	raft.state = Follower
 	raft.currTerm = 0
 	raft.votedFor = -1
@@ -56,6 +72,24 @@ func start(raft *Raft) {
 				raft.broadcastHeartbeat()
 				time.Sleep(100 * time.Millisecond)
 			}
+		}
+	}()
+}
+
+func (raft *Raft) Rpc(port string) {
+	err := rpc.Register(raft)
+	if err != nil {
+		log.Fatal("rpc register failed", zap.Error(err))
+	}
+	rpc.HandleHTTP()
+	l, e := net.Listen("tcp", port)
+	if e != nil {
+		log.Fatal("listen error:", zap.Error(err))
+	}
+	go func() {
+		err := http.Serve(l, nil)
+		if err != nil {
+			log.Fatal("http server error:", zap.Error(err))
 		}
 	}()
 }

@@ -37,12 +37,12 @@ func (raft *Raft) RequestVote(vote Vote, reply *VoteReply) error {
 	}
 
 	reply.Term = raft.currTerm
-	reply.Reply = true
+	reply.Reply = false
 	return nil
 }
 
 func (raft *Raft) sendRequestVote(id int, vote Vote, reply *VoteReply) {
-	client, err := rpc.DialHTTP("tpc", raft.nodes[id].address)
+	client, err := rpc.DialHTTP("tcp", raft.nodes[id].address)
 	if err != nil {
 		log.Fatal("dialing: ", zap.Error(err))
 	}
