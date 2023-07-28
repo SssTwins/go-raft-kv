@@ -49,7 +49,7 @@ func Start(raft *Raft) {
 				select {
 				case <-raft.heartbeatC:
 					log.Info("follower-" + strconv.Itoa(raft.self) + " received heartbeat")
-				case <-time.After(time.Duration(r.Intn(500-300)+300) * time.Millisecond):
+				case <-time.After(time.Duration(r.Intn(5000)+10000) * time.Millisecond):
 					log.Info("follower-" + strconv.Itoa(raft.self) + " timeout")
 					raft.state = Candidate
 				}
@@ -61,10 +61,11 @@ func Start(raft *Raft) {
 				// 申请投票
 				go raft.broadcastRequestVote()
 				select {
-				case <-time.After(time.Duration(r.Intn(5000-300)+300) * time.Millisecond):
+				case <-time.After(time.Duration(r.Intn(5000)+3000) * time.Millisecond):
 					log.Info("candidate-" + strconv.Itoa(raft.self) + " timeout")
 					raft.state = Follower
-				case <-raft.heartbeatC:
+					raft.votedFor = -1
+				case <-raft.toLeaderC:
 					log.Info("candidate-" + strconv.Itoa(raft.self) + " became leader")
 					raft.state = Leader
 				}
