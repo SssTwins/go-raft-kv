@@ -48,7 +48,7 @@ func (raft *Raft) sendRequestVote(id int, vote Vote, reply *VoteReply) {
 
 	if reply.Reply {
 		raft.voteCount++
-		log.Debug("当前任期: " + strconv.FormatUint(raft.currTerm, 10) + ", 节点id: " + strconv.Itoa(raft.self) + ", 票数: " + strconv.Itoa(raft.voteCount))
+		log.Info("当前任期: " + strconv.FormatUint(raft.currTerm, 10) + ", 节点id: " + strconv.Itoa(raft.self) + ", 票数: " + strconv.Itoa(raft.voteCount))
 		if raft.voteCount > len(raft.nodes)/2+1 {
 			raft.toLeaderC <- true
 		}

@@ -1,0 +1,1 @@
+go build -o .\raft_example.exe ..\..\..\cmd\raft_example.go
