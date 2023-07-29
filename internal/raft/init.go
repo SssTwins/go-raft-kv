@@ -1,6 +1,7 @@
 package raft
 
 import (
+	"fmt"
 	"go-raft-kv/internal/logprovider"
 	"go.uber.org/zap"
 	"math/rand"
@@ -67,6 +68,27 @@ func Start(raft *Raft) {
 				case <-raft.toLeaderC:
 					log.Info("candidate-" + strconv.Itoa(raft.self) + " became leader")
 					raft.state = Leader
+
+					// 初始化日志发送index
+					// todo 暂时不考虑leader重新选举的情况
+					raft.nextIndex = make([]int, len(raft.nodes))
+					raft.matchIndex = make([]int, len(raft.nodes))
+					for i := range raft.nodes {
+						raft.nextIndex[i] = 1
+						raft.matchIndex[i] = 0
+					}
+
+					// 模拟客户端发送消息
+					go func() {
+						i := 0
+						for {
+							i++
+							// leader收到客户端的command，封装成LogEntry并append 到 log
+							raft.log = append(raft.log, LogEntry{raft.currTerm, i,
+								fmt.Sprintf("user send : %d", i)})
+							time.Sleep(3 * time.Second)
+						}
+					}()
 				}
 			case Leader:
 				raft.broadcastHeartbeat()
