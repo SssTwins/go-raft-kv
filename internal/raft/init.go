@@ -41,16 +41,15 @@ func Start(raft *Raft) {
 	raft.toLeaderC = make(chan bool)
 
 	go func() {
-		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
+		r := rand.New(rand.NewSource(time.Now().UnixNano() + int64(raft.self)))
 		for {
 			switch raft.state {
 			case Follower:
 				select {
 				case <-raft.heartbeatC:
 					log.Debug("follower-" + strconv.Itoa(raft.self) + " received heartbeat")
-				case <-time.After(time.Duration(r.Intn(200)+100) * time.Millisecond):
-					log.Info("follower-" + strconv.Itoa(raft.self) + " timeout")
+				case <-time.After(time.Duration(r.Intn(500)+1000) * time.Millisecond):
+					log.Info("follower-" + strconv.Itoa(raft.self) + " timeout, became candidate")
 					raft.state = Candidate
 				}
 			case Candidate:
@@ -61,8 +60,8 @@ func Start(raft *Raft) {
 				// 申请投票
 				go raft.broadcastRequestVote()
 				select {
-				case <-time.After(time.Duration(r.Intn(200)+100) * time.Millisecond):
-					log.Info("candidate-" + strconv.Itoa(raft.self) + " timeout")
+				case <-time.After(time.Duration(r.Intn(150)+150) * time.Millisecond):
+					log.Info("candidate-" + strconv.Itoa(raft.self) + " timeout, became follower")
 					raft.state = Follower
 					raft.votedFor = -1
 				case <-raft.toLeaderC:
