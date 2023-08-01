@@ -2,7 +2,7 @@ package test
 
 import (
 	"flag"
-	"go-raft-kv/internal/raft"
+	"go-raft-kv/internal/raft/v1"
 	"strings"
 	"testing"
 )
@@ -15,12 +15,12 @@ func TestNode3(t *testing.T) {
 	// 参数解析
 	flag.Parse()
 	clusters := strings.Split(*cluster, ",")
-	raftNode := raft.Init(*id, clusters)
+	raftNode := v1.Init(*id, clusters)
 
 	// 监听rpc
 	raftNode.Rpc(*port)
 	// 开启 raft
-	raft.Start(raftNode)
+	v1.Start(raftNode)
 
 	select {}
 }

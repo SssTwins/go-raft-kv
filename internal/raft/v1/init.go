@@ -1,4 +1,4 @@
-package raft
+package v1
 
 import (
 	"fmt"
@@ -90,6 +90,8 @@ func Start(raft *Raft) {
 						}
 					}()
 				}
+			case PreCandidate:
+
 			case Leader:
 				raft.broadcastHeartbeat()
 				time.Sleep(50 * time.Millisecond)

@@ -1,3 +1,5 @@
-node1: raft_example.exe -id 1 -cluster 127.0.0.1:22379,127.0.0.1:32379 -port :12379
-node2: raft_example.exe -id 2 -cluster 127.0.0.1:12379,127.0.0.1:32379 -port :22379
-node3: raft_example.exe -id 3 -cluster 127.0.0.1:12379,127.0.0.1:22379 -port :32379
+node1: raft_example.exe -id 1 -cluster 127.0.0.1:22379,127.0.0.1:32379,127.0.0.1:42379,127.0.0.1:52379 -port :12379
+node2: raft_example.exe -id 2 -cluster 127.0.0.1:12379,127.0.0.1:32379,127.0.0.1:42379,127.0.0.1:52379 -port :22379
+node3: raft_example.exe -id 3 -cluster 127.0.0.1:12379,127.0.0.1:22379,127.0.0.1:42379,127.0.0.1:52379 -port :32379
+node4: raft_example.exe -id 4 -cluster 127.0.0.1:12379,127.0.0.1:22379,127.0.0.1:32379,127.0.0.1:52379 -port :42379
+node5: raft_example.exe -id 5 -cluster 127.0.0.1:12379,127.0.0.1:22379,127.0.0.1:32379,127.0.0.1:42379 -port :52379

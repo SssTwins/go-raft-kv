@@ -1,4 +1,4 @@
-package raft
+package v1
 
 import "go.uber.org/zap"
 
@@ -7,6 +7,7 @@ type State = uint8
 // Raft节点三种状态：Follower、Candidate、Leader
 const (
 	Follower State = iota + 1
+	PreCandidate
 	Candidate
 	Leader
 )

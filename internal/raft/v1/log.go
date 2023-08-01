@@ -1,4 +1,4 @@
-package raft
+package v1
 
 type LogEntry struct {
 

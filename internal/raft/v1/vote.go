@@ -1,4 +1,4 @@
-package raft
+package v1
 
 import (
 	"go.uber.org/zap"
@@ -7,8 +7,9 @@ import (
 )
 
 type Vote struct {
-	Term        uint64
-	CandidateId int
+	Term         uint64
+	CandidateId  int
+	LastLogIndex int
 }
 
 type VoteReply struct {
@@ -59,9 +60,9 @@ func (raft *Raft) sendRequestVote(id int, vote Vote, reply *VoteReply) {
 // 因Candidate会先投票给自己，所以此处对节点状态做判断
 func (raft *Raft) RequestVote(vote Vote, reply *VoteReply) error {
 
-	// 如果Candidate节点term小于follower
+	// 如果Candidate节点term小于follower，或二者term相同但是Candidate节点日志索引小于follower
 	// 说明Candidate节点过时，拒绝投票
-	if vote.Term < raft.currTerm {
+	if vote.Term < raft.currTerm || (vote.Term == raft.currTerm && vote.LastLogIndex < raft.commitIndex) {
 		reply.Term = raft.currTerm
 		reply.Reply = false
 		return nil

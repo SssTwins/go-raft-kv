@@ -1,4 +1,4 @@
-package raft
+package v1
 
 import (
 	"go.uber.org/zap"
@@ -67,7 +67,7 @@ func (raft *Raft) sendHeartbeat(index int, hb Heartbeat, reply *HeartbeatReply) 
 			// 如果大于半数节点同步成功
 			// 1. 更新 leader 节点的 commitIndex
 			// 2. 返回给客户端
-			// 3. 应用状态就机
+			// 3. 应用状态机
 			// 4. 通知 Followers Entry 已提交
 		}
 	} else {
